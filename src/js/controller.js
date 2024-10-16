@@ -31,13 +31,17 @@ const renderSpinner = function (parentEl) {
 
 // Show a recipe
 const showRecipe = async function () {
-	// 1) Loading recipe
-	renderSpinner(recipeContainer);
 	try {
-		const res = await fetch(
-			// "https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e8355"
-			"https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886"
-		);
+		// Fetch the recipes hashed id from the app's Url field
+		const id = window.location.hash.slice(1);
+		console.log(id);
+
+		// Guard clause
+		if (!id) return;
+
+		// 1) Loading recipe
+		renderSpinner(recipeContainer);
+		const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
 		const data = await res.json();
 
 		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -155,4 +159,10 @@ const showRecipe = async function () {
 		alert(error);
 	}
 };
-showRecipe();
+// showRecipe();
+
+// Handle the event of a Hash Change in the browser's Url field and also the page's load event
+["hashchange", "load"].forEach(ev => window.addEventListener(ev, showRecipe));
+
+// window.addEventListener("hashchange", showRecipe);
+// window.addEventListener("load", showRecipe);
