@@ -1,3 +1,6 @@
+import { API_URL } from "./config.js";
+import { getJSON } from "./helpers.js";
+
 export const state = {
 	recipe: {}
 };
@@ -5,11 +8,8 @@ export const state = {
 // Remember: an ASYNC function returns a Promise. Therefore the calling function must AWAIT that Promise!!!
 export const loadRecipe = async function (id) {
 	try {
-		const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-		const data = await res.json();
-
-		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-		console.log(res, data);
+		const data = await getJSON(`${API_URL}/${id}`);
+		console.log(data);
 
 		// Create a recipe object
 		const { recipe } = data.data;
@@ -26,10 +26,11 @@ export const loadRecipe = async function (id) {
 			ingredients: recipe.ingredients
 		};
 
-		console.log(state.recipe);
+		// console.log(state.recipe);
 
 		// end of try
 	} catch (err) {
-		alert(err);
+		// Temp error handler
+		console.error(`${err} 💥`);
 	}
 };
