@@ -9,7 +9,7 @@ export const state = {
 export const loadRecipe = async function (id) {
 	try {
 		const data = await getJSON(`${API_URL}/${id}`);
-		console.log(data);
+		// console.log(data);
 
 		// Create a recipe object
 		const { recipe } = data.data;
@@ -30,7 +30,6 @@ export const loadRecipe = async function (id) {
 
 		// end of try
 	} catch (err) {
-		// Temp error handler
-		console.error(`${err} 💥`);
+		throw err;
 	}
 };
