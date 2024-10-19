@@ -30,9 +30,12 @@ const controlRecipes = async function () {
 
 		// end try
 	} catch (error) {
-		alert(error);
+		console.log(error);
 	}
 };
 
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
-["hashchange", "load"].forEach(ev => window.addEventListener(ev, controlRecipes));
+const init = function () {
+	recipeView.addHandlerRender(controlRecipes);
+};
+init();
