@@ -57,7 +57,7 @@ class RecipeView {
 		this.#parentElement.insertAdjacentHTML("afterbegin", markup);
 	}
 
-	/** Te Publisher/Subscriber Pattern for handling events in a MVC architecture */
+	/** The Publisher/Subscriber Pattern for handling events in a MVC architecture */
 	addHandlerRender(handler) {
 		["hashchange", "load"].forEach(ev => window.addEventListener(ev, handler));
 	}

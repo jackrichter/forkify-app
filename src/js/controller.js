@@ -1,15 +1,15 @@
 import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
+import searchView from "./views/searchView.js";
 
 import "core-js/stable"; // Polyfill everything else
 import "regenerator-runtime/runtime"; // Polyfill async/await
-
-const recipeContainer = document.querySelector(".recipe");
 
 // https://forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////
 
+/** Recipe Functionality */
 const controlRecipes = async function () {
 	try {
 		// Fetch the recipes hashed id from the app's Url field
@@ -34,8 +34,29 @@ const controlRecipes = async function () {
 	}
 };
 
+/** Search Functionality */
+const controlSearchResults = async function () {
+	try {
+		// 1) Get search query
+		const query = searchView.getQuery();
+		if (!query) return;
+
+		// 2) Load search results
+		await model.loadSearchResults(query);
+
+		// 3) Render results
+		console.log(model.state.search.results);
+
+		// End try
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
 const init = function () {
+	// Subscribers
 	recipeView.addHandlerRender(controlRecipes);
+	searchView.addHandlerSearch(controlSearchResults);
 };
 init();
