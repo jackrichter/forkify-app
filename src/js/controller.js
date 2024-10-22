@@ -9,9 +9,9 @@ import "regenerator-runtime/runtime"; // Polyfill async/await
 // https://forkify-api.herokuapp.com/v2
 
 // From Parcel
-if (module.hot) {
-	module.hot.accept();
-}
+// if (module.hot) {
+// 	module.hot.accept();
+// }
 
 ///////////////////////////////////////
 
@@ -52,9 +52,10 @@ const controlSearchResults = async function () {
 		// 2) Load search results
 		await model.loadSearchResults(query);
 
-		// 3) Render results
+		// 3) Render results with pagination
 		// console.log(model.state.search.results);
-		resultsView.render(model.state.search.results);
+		// resultsView.render(model.state.search.results);
+		resultsView.render(model.getSearchResultsPage());
 
 		// End try
 	} catch (err) {
