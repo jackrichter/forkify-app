@@ -54,8 +54,7 @@ const controlSearchResults = async function () {
 		await model.loadSearchResults(query);
 
 		// 3) Render results with pagination
-		// resultsView.render(model.state.search.results);
-		resultsView.render(model.getSearchResultsPage());
+		resultsView.render(model.getSearchResultsPage(3));
 
 		// 4) Render initial pagination buttons
 		paginationView.render(model.state.search);
@@ -66,10 +65,20 @@ const controlSearchResults = async function () {
 	}
 };
 
+/** Pagination controller for buttons clicked */
+const controlPagination = function (gotoPage) {
+	// Render NEW results
+	resultsView.render(model.getSearchResultsPage(gotoPage));
+
+	// Render pagination buttons
+	paginationView.render(model.state.search);
+};
+
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
 const init = function () {
 	// Subscribers
 	recipeView.addHandlerRender(controlRecipes);
 	searchView.addHandlerSearch(controlSearchResults);
+	paginationView.addHandlerClick(controlPagination);
 };
 init();

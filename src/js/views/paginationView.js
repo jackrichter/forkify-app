@@ -4,11 +4,27 @@ import icons from "url:../../img/icons.svg";
 class PaginationView extends View {
 	_parentElement = document.querySelector(".pagination");
 
+	// Publisher
+	addHandlerClick(handler) {
+		this._parentElement.addEventListener("click", function (e) {
+			const btn = e.target.closest(".btn--inline"); // Select the closest button element to the clicked element, searching up the tree for a parent (if you clicked on the span, use or svg).
+
+			if (!btn) return;
+			// console.log(btn);
+
+			const gotoPage = +btn.dataset.goto;
+			// console.log(gotoPage);
+
+			handler(gotoPage);
+		});
+	}
+
 	_generateMarkup() {
 		const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-		console.log(numPages);
+		// console.log(numPages);
 
 		const currentPage = this._data.page;
+		// console.log(currentPage);
 
 		// Page 1, and there are other pages
 		if (currentPage === 1 && numPages > 1) {
@@ -32,12 +48,14 @@ class PaginationView extends View {
 	}
 
 	_generateMarkupButton(currentPage, direction) {
+		const pageToGo = `${direction === "prev" ? currentPage - 1 : currentPage + 1}`;
+		// console.log(pageToGo);
 		return `
-      <button class="btn--inline pagination__btn--${direction}">
+      <button data-goto="${pageToGo}" class="btn--inline pagination__btn--${direction}">
         <svg class="search__icon">
           <use href="${icons}#icon-arrow-${direction === "prev" ? "left" : "right"}"></use>
         </svg>
-        <span>Page ${direction === "prev" ? currentPage - 1 : currentPage + 1}</span>
+        <span>Page ${pageToGo}</span>
       </button>
     `;
 	}
