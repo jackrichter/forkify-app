@@ -1,5 +1,4 @@
 import View from "./view";
-
 import icons from "url:../../img/icons.svg"; // Parcel 2
 import { Fraction } from "fractional";
 
