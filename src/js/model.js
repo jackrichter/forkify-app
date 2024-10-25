@@ -66,7 +66,6 @@ export const loadSearchResults = async function (query) {
 };
 
 /** Pagination */
-
 export const getSearchResultsPage = function (page = state.search.page) {
 	state.search.page = page;
 
@@ -74,4 +73,14 @@ export const getSearchResultsPage = function (page = state.search.page) {
 	const end = page * state.search.resultsPerPage; // if page 1 => 10
 
 	return state.search.results.slice(start, end); // slice: end not including => 0, 9
+};
+
+/** Updating Servings */
+export const updateServings = function (newServings) {
+	// Algorithm: newQty = oldQty * newServings / oldServings
+	state.recipe.ingredients.forEach(ing => {
+		ing.quantity = (ing.quantity * newServings) / state.recipe.servings;
+	});
+
+	state.recipe.servings = newServings;
 };
