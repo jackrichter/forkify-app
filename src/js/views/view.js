@@ -14,6 +14,38 @@ export default class View {
 		this._parentElement.insertAdjacentHTML("afterbegin", markup);
 	}
 
+	/** UPDATE DOM DYNAMICALLY */
+	update(data) {
+		this._data = data;
+		const newMarkup = this._generateMarkup();
+
+		// Convert the markup string into real DOM node objects!!!
+		const newDom = document.createRange().createContextualFragment(newMarkup);
+		const newElements = Array.from(newDom.querySelectorAll("*"));
+		const currentElements = Array.from(this._parentElement.querySelectorAll("*"));
+		// console.log(currentElements, newElements);
+
+		// Compare the two and update current with what had been changed
+		newElements.forEach((newEl, i) => {
+			const curEl = currentElements[i];
+			// console.log(newEl, curEl, newEl.isEqualNode(curEl));
+
+			// Update changed TEXT
+			if (!newEl.isEqualNode(curEl) && newEl.firstChild.nodeValue.trim() !== "") {
+				// console.log(newEl.firstChild?.nodeValue.trim());
+				curEl.textContent = newEl.textContent;
+			}
+
+			// Update changed ATTRIBUTES
+			if (!newEl.isEqualNode(curEl)) {
+				// console.log(newEl.attributes);
+				Array.from(newEl.attributes).forEach(attr =>
+					curEl.setAttribute(attr.name, attr.value)
+				);
+			}
+		});
+	}
+
 	renderSpinner() {
 		const markup = `
       <div class="spinner">

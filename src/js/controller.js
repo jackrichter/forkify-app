@@ -29,6 +29,9 @@ const controlRecipes = async function () {
 		// Render a spinner
 		recipeView.renderSpinner();
 
+		// 0) update results view to mark selected search result
+		resultsView.update(model.getSearchResultsPage());
+
 		// 1) Loading recipe
 		await model.loadRecipe(id);
 
@@ -54,7 +57,7 @@ const controlSearchResults = async function () {
 		await model.loadSearchResults(query);
 
 		// 3) Render results with pagination
-		resultsView.render(model.getSearchResultsPage(3));
+		resultsView.render(model.getSearchResultsPage());
 
 		// 4) Render initial pagination buttons
 		paginationView.render(model.state.search);
@@ -80,7 +83,10 @@ const controlServings = function (newServings) {
 	model.updateServings(newServings);
 
 	// Update the recipe view
-	recipeView.render(model.state.recipe);
+	// recipeView.render(model.state.recipe);
+
+	/** Update ONLY where the view has CHANGED */
+	recipeView.update(model.state.recipe);
 };
 
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
