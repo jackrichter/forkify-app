@@ -8,7 +8,8 @@ export const state = {
 		results: [],
 		page: 1,
 		resultsPerPage: RES_PER_PAGE
-	}
+	},
+	bookmarks: []
 };
 
 // Remember: an ASYNC function returns a Promise. Therefore the calling function must AWAIT that Promise!!!
@@ -31,8 +32,14 @@ export const loadRecipe = async function (id) {
 			cookingTime: recipe.cooking_time,
 			ingredients: recipe.ingredients
 		};
-
 		// console.log(state.recipe);
+
+		// Check if this loaded recipe is in the BOOKMARKS array in order to keep this state between loads
+		if (state.bookmarks.some(bookmark => bookmark.id === id)) {
+			state.recipe.bookmarked = true;
+		} else {
+			state.recipe.bookmarked = false;
+		}
 
 		// end of try
 	} catch (err) {
@@ -57,6 +64,7 @@ export const loadSearchResults = async function (query) {
 				image: rec.image_url
 			};
 		});
+		state.search.page = 1;
 
 		// End try
 	} catch (err) {
@@ -83,4 +91,24 @@ export const updateServings = function (newServings) {
 	});
 
 	state.recipe.servings = newServings;
+};
+
+/** Bookmarks */
+export const addBookmark = function (recipe) {
+	// Add a bookmark
+	state.bookmarks.push(recipe);
+
+	// Mark current recipe as bookmarked
+	if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+};
+
+export const deleteBookmark = function (id) {
+	// Find index in the array for the entry to be removed
+	const index = state.bookmarks.findIndex(element => element.id === id);
+
+	// Remove from array
+	state.bookmarks.splice(index, 1);
+
+	// Mark current recipe as NOT bookmarked
+	if (id === state.recipe.id) state.recipe.bookmarked = false;
 };
