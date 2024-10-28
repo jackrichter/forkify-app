@@ -4,6 +4,7 @@ import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView.js";
 import paginationView from "./views/paginationView.js";
 import bookmarksView from "./views/bookmarksView.js";
+import addRecipeView from "./views/addRecipeView.js";
 
 import "core-js/stable"; // Polyfill everything else
 import "regenerator-runtime/runtime"; // Polyfill async/await
@@ -112,6 +113,13 @@ const controlBookmarks = function () {
 	bookmarksView.render(model.state.bookmarks);
 };
 
+/** Create new recipe */
+const controlAddNewRecipe = function (newRecipe) {
+	console.log(newRecipe);
+
+	// Upload the new recipe
+};
+
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
 const init = function () {
 	// Subscribers
@@ -121,6 +129,7 @@ const init = function () {
 	recipeView.addHandlerAddBookmark(controlAddBookmark);
 	searchView.addHandlerSearch(controlSearchResults);
 	paginationView.addHandlerClick(controlPagination);
+	addRecipeView.addHandlerUpload(controlAddNewRecipe);
 };
 init();
 
