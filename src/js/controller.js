@@ -30,8 +30,9 @@ const controlRecipes = async function () {
 		// Render a spinner
 		recipeView.renderSpinner();
 
-		// 0) update results view to mark selected search result
+		// 3) update results view to mark selected search result
 		resultsView.update(model.getSearchResultsPage());
+		// 3) Update bookmarks view
 		bookmarksView.update(model.state.bookmarks);
 
 		// 1) Loading recipe
@@ -43,6 +44,7 @@ const controlRecipes = async function () {
 		// end try
 	} catch (error) {
 		recipeView.renderError();
+		console.log(error);
 	}
 };
 
@@ -105,9 +107,15 @@ const controlAddBookmark = function () {
 	bookmarksView.render(model.state.bookmarks);
 };
 
+// To when the app first loads
+const controlBookmarks = function () {
+	bookmarksView.render(model.state.bookmarks);
+};
+
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
 const init = function () {
 	// Subscribers
+	bookmarksView.addHandlerRender(controlBookmarks);
 	recipeView.addHandlerRender(controlRecipes);
 	recipeView.addHandlerUpdateServings(controlServings);
 	recipeView.addHandlerAddBookmark(controlAddBookmark);
@@ -115,3 +123,9 @@ const init = function () {
 	paginationView.addHandlerClick(controlPagination);
 };
 init();
+
+// For debugging under development
+const clearBookmarks = function () {
+	localStorage.clear("bookmarks");
+};
+// clearBookmarks();
