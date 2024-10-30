@@ -1,5 +1,5 @@
-import { API_URL, RES_PER_PAGE } from "./config.js";
-import { getJSON } from "./helpers.js";
+import { API_URL, RES_PER_PAGE, KEY } from "./config.js";
+import { getJSON, sendJSON } from "./helpers.js";
 
 export const state = {
 	recipe: {},
@@ -12,6 +12,23 @@ export const state = {
 	bookmarks: []
 };
 
+const createRecipeObject = function (data) {
+	const { recipe } = data.data;
+	return {
+		id: recipe.id,
+		title: recipe.title,
+		publisher: recipe.publisher,
+		sourceUrl: recipe.source_url,
+		image: recipe.image_url,
+		servings: recipe.servings,
+		cookingTime: recipe.cooking_time,
+		ingredients: recipe.ingredients,
+		bookmarked: false,
+		// Conditionally add the key to the recipe object
+		...(recipe.key && { key: recipe.key })
+	};
+};
+
 // Remember: an ASYNC function returns a Promise. Therefore the calling function must AWAIT that Promise!!!
 export const loadRecipe = async function (id) {
 	try {
@@ -19,19 +36,7 @@ export const loadRecipe = async function (id) {
 		// console.log(data);
 
 		// Create a recipe object
-		const { recipe } = data.data;
-		// let recipe = Object.assign({}, data.data.recipe);
-
-		state.recipe = {
-			id: recipe.id,
-			title: recipe.title,
-			publisher: recipe.publisher,
-			sourceUrl: recipe.source_url,
-			image: recipe.image_url,
-			servings: recipe.servings,
-			cookingTime: recipe.cooking_time,
-			ingredients: recipe.ingredients
-		};
+		state.recipe = createRecipeObject(data);
 		// console.log(state.recipe);
 
 		// Check if this loaded recipe is in the BOOKMARKS array in order to keep this state between loads
@@ -124,7 +129,49 @@ const persistBookmark = function () {
 	localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
 };
 
-init = function () {
+/** Uploading the newly created recipe */
+export const uploadRecipe = async function (newRecipe) {
+	try {
+		// 1) Transform the raw input data into the same format as the data coming from the external api
+		const ingredients = Object.entries(newRecipe)
+			.filter(entry => entry[0].startsWith("ingredient") && entry[1] !== "")
+			.map(ing => {
+				const ingArr = ing[1].replaceAll(" ", "").split(",");
+				if (ingArr.length != 3)
+					throw new Error("Wrong ingredient format! Please use the correct format ;)");
+				const [quantity, unit, description] = ingArr;
+				return { quantity: quantity ? +quantity : null, unit, description };
+			});
+
+		// 2) Create the object that is ready to be uploaded
+		const recipe = {
+			title: newRecipe.title,
+			source_url: newRecipe.sourceUrl,
+			image_url: newRecipe.image,
+			publisher: newRecipe.publisher,
+			cooking_time: +newRecipe.cookingTime,
+			servings: +newRecipe.servings,
+			ingredients
+		};
+		// console.log(recipe);
+
+		// 3) AJAX Request (POST)
+		const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+
+		// 4) Retain the uploaded data in app's own state in order to display it to the user
+		state.recipe = createRecipeObject(data);
+
+		// Bookmark this recipe
+		state.recipe.bookmarked = true;
+		addBookmark(recipe);
+
+		// End try
+	} catch (error) {
+		throw error;
+	}
+};
+
+const init = function () {
 	const storage = localStorage.getItem("bookmarks");
 	if (storage) {
 		state.bookmarks = JSON.parse(storage);

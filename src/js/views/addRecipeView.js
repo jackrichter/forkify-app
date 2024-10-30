@@ -3,6 +3,7 @@ import icons from "url:../../img/icons.svg";
 
 class AddRecipeView extends View {
 	_parentElement = document.querySelector(".upload");
+	_message = "Recipe was successfully uploaded :)";
 
 	_window = document.querySelector(".add-recipe-window");
 	_overlay = document.querySelector(".overlay");
@@ -27,7 +28,7 @@ class AddRecipeView extends View {
 		});
 	}
 
-	_toggleWindow() {
+	toggleWindow() {
 		this._overlay.classList.toggle("hidden");
 		this._window.classList.toggle("hidden");
 	}
@@ -35,12 +36,12 @@ class AddRecipeView extends View {
 	// ATTN. The 'this' keyword inside of a handler points to the element it is bound to. In this case to _btnOpen!!!
 	// We need to bind the 'this' keyword to the right object
 	_addHandlerShowWidow() {
-		this._btnOpen.addEventListener("click", this._toggleWindow.bind(this));
+		this._btnOpen.addEventListener("click", this.toggleWindow.bind(this));
 	}
 
 	_addHandlerHideWidow() {
-		this._btnClose.addEventListener("click", this._toggleWindow.bind(this));
-		this._overlay.addEventListener("click", this._toggleWindow.bind(this));
+		this._btnClose.addEventListener("click", this.toggleWindow.bind(this));
+		this._overlay.addEventListener("click", this.toggleWindow.bind(this));
 	}
 
 	_generateMarkup() {}

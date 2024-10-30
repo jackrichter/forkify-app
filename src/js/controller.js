@@ -1,4 +1,5 @@
 import * as model from "./model.js";
+import { MODAL_CLOSE_SEC } from "./config.js";
 import recipeView from "./views/recipeView.js";
 import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView.js";
@@ -114,10 +115,31 @@ const controlBookmarks = function () {
 };
 
 /** Create new recipe */
-const controlAddNewRecipe = function (newRecipe) {
-	console.log(newRecipe);
+const controlAddNewRecipe = async function (newRecipe) {
+	try {
+		// Show loading spinner
+		addRecipeView.renderSpinner();
 
-	// Upload the new recipe
+		// Upload the new recipe
+		await model.uploadRecipe(newRecipe);
+		// console.log(model.state.recipe);
+
+		// Render the new recipe
+		recipeView.render(model.state.recipe);
+
+		// Success message
+		addRecipeView.renderMessage();
+
+		// Close the modal Form window after a short while
+		setTimeout(function () {
+			addRecipeView.toggleWindow();
+		}, MODAL_CLOSE_SEC * 1000);
+
+		// End try
+	} catch (error) {
+		console.error("💥", error);
+		addRecipeView.renderError(error.message);
+	}
 };
 
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
