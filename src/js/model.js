@@ -163,7 +163,7 @@ export const uploadRecipe = async function (newRecipe) {
 
 		// 4) Retain the uploaded data in app's own state in order to display it to the user
 		state.recipe = createRecipeObject(data);
-		console.log(state.recipe, data);
+		// console.log(state.recipe, data);
 
 		// Bookmark this recipe
 		state.recipe.bookmarked = true;
