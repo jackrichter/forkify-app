@@ -122,13 +122,19 @@ const controlAddNewRecipe = async function (newRecipe) {
 
 		// Upload the new recipe
 		await model.uploadRecipe(newRecipe);
-		// console.log(model.state.recipe);
+		console.log(model.state.recipe);
 
 		// Render the new recipe
 		recipeView.render(model.state.recipe);
 
 		// Success message
 		addRecipeView.renderMessage();
+
+		// Render bookmark view
+		bookmarksView.render(model.state.bookmarks);
+
+		// Change ID in the URL
+		window.history.pushState(null, "", `#${model.state.recipe.id}`);
 
 		// Close the modal Form window after a short while
 		setTimeout(function () {

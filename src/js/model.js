@@ -1,5 +1,6 @@
 import { API_URL, RES_PER_PAGE, KEY } from "./config.js";
-import { getJSON, sendJSON } from "./helpers.js";
+// import { getJSON, sendJSON } from "./helpers.js";
+import { AJAX } from "./helpers.js";
 
 export const state = {
 	recipe: {},
@@ -32,7 +33,7 @@ const createRecipeObject = function (data) {
 // Remember: an ASYNC function returns a Promise. Therefore the calling function must AWAIT that Promise!!!
 export const loadRecipe = async function (id) {
 	try {
-		const data = await getJSON(`${API_URL}${id}`);
+		const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
 		// console.log(data);
 
 		// Create a recipe object
@@ -58,7 +59,7 @@ export const loadSearchResults = async function (query) {
 	try {
 		state.search.query = query;
 
-		const data = await getJSON(`${API_URL}?search=${query}`);
+		const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
 		// console.log(data);
 
 		state.search.results = data.data.recipes.map(rec => {
@@ -66,7 +67,8 @@ export const loadSearchResults = async function (query) {
 				id: rec.id,
 				title: rec.title,
 				publisher: rec.publisher,
-				image: rec.image_url
+				image: rec.image_url,
+				...(rec.key && { key: rec.key })
 			};
 		});
 		state.search.page = 1;
@@ -136,7 +138,8 @@ export const uploadRecipe = async function (newRecipe) {
 		const ingredients = Object.entries(newRecipe)
 			.filter(entry => entry[0].startsWith("ingredient") && entry[1] !== "")
 			.map(ing => {
-				const ingArr = ing[1].replaceAll(" ", "").split(",");
+				// const ingArr = ing[1].replaceAll(" ", "").split(",");
+				const ingArr = ing[1].split(",").map(item => item.trim());
 				if (ingArr.length != 3)
 					throw new Error("Wrong ingredient format! Please use the correct format ;)");
 				const [quantity, unit, description] = ingArr;
@@ -153,13 +156,14 @@ export const uploadRecipe = async function (newRecipe) {
 			servings: +newRecipe.servings,
 			ingredients
 		};
-		// console.log(recipe);
+		console.log(recipe);
 
 		// 3) AJAX Request (POST)
-		const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+		const data = await AJAX(`${API_URL}?key=${KEY}`, recipe);
 
 		// 4) Retain the uploaded data in app's own state in order to display it to the user
 		state.recipe = createRecipeObject(data);
+		console.log(state.recipe, data);
 
 		// Bookmark this recipe
 		state.recipe.bookmarked = true;

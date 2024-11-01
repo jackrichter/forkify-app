@@ -9,41 +9,65 @@ const timeout = function (s) {
 	});
 };
 
-export const getJSON = async function (url) {
+// Refactor both send and getJSON to one function
+export const AJAX = async function (url, uploadData = undefined) {
 	try {
-		const fetchRequest = fetch(url);
-
-		const res = await Promise.race([fetchRequest, timeout(TIMEOUT_SEC)]);
+		const fetchPro = uploadData
+			? fetch(url, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(uploadData)
+			  })
+			: fetch(url);
+		const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
 		const data = await res.json();
 
 		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
 		return data;
+
 		// End try
 	} catch (err) {
 		throw err;
 	}
 };
 
-// POST request with 'fetch'
-export const sendJSON = async function (url, uploadData) {
-	try {
-		const fetchRequest = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(uploadData)
-		});
+// export const getJSON = async function (url) {
+// 	try {
+// 		const fetchRequest = fetch(url);
 
-		const res = await Promise.race([fetchRequest, timeout(TIMEOUT_SEC)]);
-		const data = await res.json();
+// 		const res = await Promise.race([fetchRequest, timeout(TIMEOUT_SEC)]);
+// 		const data = await res.json();
 
-		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+// 		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
 
-		return data;
-		// End try
-	} catch (err) {
-		throw err;
-	}
-};
+// 		return data;
+// 		// End try
+// 	} catch (err) {
+// 		throw err;
+// 	}
+// };
+
+// // POST request with 'fetch'
+// export const sendJSON = async function (url, uploadData) {
+// 	try {
+// 		const fetchRequest = fetch(url, {
+// 			method: "POST",
+// 			headers: {
+// 				"Content-Type": "application/json"
+// 			},
+// 			body: JSON.stringify(uploadData)
+// 		});
+
+// 		const res = await Promise.race([fetchRequest, timeout(TIMEOUT_SEC)]);
+// 		const data = await res.json();
+
+// 		if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+
+// 		return data;
+// 		// End try
+// 	} catch (err) {
+// 		throw err;
+// 	}
+// };
