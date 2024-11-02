@@ -148,6 +148,10 @@ const controlAddNewRecipe = async function (newRecipe) {
 	}
 };
 
+const newFeature = function () {
+	console.log("Welcome to the application");
+};
+
 // Handle the event of a Hash Change in the browser's Url field and also the page's load event
 const init = function () {
 	// Subscribers
@@ -158,6 +162,7 @@ const init = function () {
 	searchView.addHandlerSearch(controlSearchResults);
 	paginationView.addHandlerClick(controlPagination);
 	addRecipeView.addHandlerUpload(controlAddNewRecipe);
+	newFeature();
 };
 init();
 
